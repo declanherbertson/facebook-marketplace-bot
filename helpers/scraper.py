@@ -1,5 +1,6 @@
 import os
 import pickle
+import subprocess
 import time
 import random
 from webdriver_manager.chrome import ChromeDriverManager
@@ -53,6 +54,10 @@ class Scraper:
 	# Setup chrome driver with predefined options
 	def setup_driver(self):
 		chrome_driver_path = ChromeDriverManager().install()
+
+		# Change the 'cdc_' string in the chromedriver automatically to prevent detecting it as a bot
+		# Note that this adds perl as a dependency to the project
+		subprocess.call(['perl', '-pi', '-e', 's/cdc_/dig_/g', chrome_driver_path])
 		self.driver = webdriver.Chrome(service=ChromeService(chrome_driver_path), options = self.driver_options)
 		self.driver.get(self.url)
 		self.driver.maximize_window()
